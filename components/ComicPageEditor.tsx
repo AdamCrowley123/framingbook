@@ -9,6 +9,7 @@ interface ComicPageEditorProps {
     pageSize: PageSize;
     initialImages: UploadedImage[];
     onReset: () => void;
+    onChangeTemplate: () => void;
     pageSettings: PageSettings;
     onPageSettingsChange: Dispatch<SetStateAction<PageSettings>>;
     panelStyle: PanelStyle;
@@ -28,6 +29,7 @@ export const ComicPageEditor: React.FC<ComicPageEditorProps> = ({
     pageSize, 
     initialImages, 
     onReset,
+    onChangeTemplate,
     pageSettings,
     onPageSettingsChange,
     panelStyle,
@@ -536,8 +538,19 @@ export const ComicPageEditor: React.FC<ComicPageEditorProps> = ({
                     {renderTextCustomizer(titleProps, onTitlePropsChange, 'Title')}
                     {renderTextCustomizer(pageNumberProps, onPageNumberPropsChange, 'Page Number')}
 
-                    <div className="pt-4 border-t border-gray-700">
-                        <button onClick={onReset} className="w-full px-6 py-3 rounded-md bg-red-600 text-white font-bold hover:bg-red-500 transition-colors shadow-lg hover:shadow-red-500/30 transform hover:-translate-y-0.5">Start Over</button>
+                    <div className="pt-4 border-t border-gray-700 space-y-3">
+                         <button 
+                            onClick={onChangeTemplate} 
+                            className="w-full px-6 py-3 rounded-md bg-gray-600 text-white font-bold hover:bg-gray-500 transition-colors shadow-lg transform hover:-translate-y-0.5"
+                        >
+                            Change Template
+                        </button>
+                        <button 
+                            onClick={onReset} 
+                            className="w-full px-6 py-3 rounded-md bg-red-600 text-white font-bold hover:bg-red-500 transition-colors shadow-lg hover:shadow-red-500/30 transform hover:-translate-y-0.5"
+                        >
+                            Start Over
+                        </button>
                     </div>
                 </div>
             </div>

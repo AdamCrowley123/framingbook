@@ -59,7 +59,12 @@ const App: React.FC = () => {
 
     const handleTemplateSelect = (layout: ComicLayout) => {
         setComicLayout(layout);
-        setStep('UPLOAD_IMAGES');
+        // If images are already uploaded, go back to editing, otherwise proceed to upload.
+        if (uploadedImages.length > 0) {
+            setStep('EDIT_PAGE');
+        } else {
+            setStep('UPLOAD_IMAGES');
+        }
     };
 
     const handleImageUpload = (images: UploadedImage[]) => {
@@ -71,11 +76,16 @@ const App: React.FC = () => {
         }
     };
     
+    // New function to go back to template selection from the editor
+    const handleChangeTemplate = () => {
+        setStep('SELECT_TEMPLATE');
+    };
+    
     const goBack = () => {
         if (step === 'SELECT_COUNT') {
             setStep('SELECT_PAGE_SIZE');
             setPageSize(null);
-        } else if (step === 'SELECT_TEMPLATE' || step === 'CREATE_TEMPLATE') {
+        } else if (step === 'SELECT_TEMPLATE') {
             setStep('SELECT_COUNT');
             setPanelCount(null);
         } else if (step === 'UPLOAD_IMAGES') {
@@ -112,11 +122,20 @@ const App: React.FC = () => {
             
             case 'SELECT_TEMPLATE':
                 if (!panelCount || !pageSize) { handleReset(); return null; }
-                return <TemplateSelector panelCount={panelCount} pageSize={pageSize} onSelect={handleTemplateSelect} onBack={goBack} onSelectCustom={() => setStep('CREATE_TEMPLATE')} />;
+                return <TemplateSelector 
+                    panelCount={panelCount} 
+                    pageSize={pageSize} 
+                    onSelect={handleTemplateSelect} 
+                    onBack={uploadedImages.length > 0 ? () => setStep('EDIT_PAGE') : goBack} 
+                    onSelectCustom={() => setStep('CREATE_TEMPLATE')} />;
             
             case 'CREATE_TEMPLATE':
                 if (!panelCount || !pageSize) { handleReset(); return null; }
-                return <LayoutEditor panelCount={panelCount} pageSize={pageSize} onConfirm={handleTemplateSelect} onBack={() => setStep('SELECT_TEMPLATE')} />;
+                return <LayoutEditor 
+                    panelCount={panelCount} 
+                    pageSize={pageSize} 
+                    onConfirm={handleTemplateSelect} 
+                    onBack={() => setStep('SELECT_TEMPLATE')} />;
 
             case 'UPLOAD_IMAGES':
                 if (!panelCount || !comicLayout) { handleReset(); return null; }
@@ -136,6 +155,7 @@ const App: React.FC = () => {
                             pageSize={pageSize}
                             initialImages={uploadedImages} 
                             onReset={handleReset}
+                            onChangeTemplate={handleChangeTemplate}
                             pageSettings={pageSettings}
                             onPageSettingsChange={setPageSettings}
                             panelStyle={panelStyle}
